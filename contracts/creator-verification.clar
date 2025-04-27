@@ -1,30 +1,40 @@
+;; Creator Verification Contract
+;; This contract validates legitimate content producers
 
-;; title: creator-verification
-;; version:
-;; summary:
-;; description:
+(define-data-var admin principal tx-sender)
 
-;; traits
-;;
+;; Map to store verified creators
+(define-map verified-creators principal bool)
 
-;; token definitions
-;;
+;; Error codes
+(define-constant err-not-admin (err u100))
+(define-constant err-already-verified (err u101))
+(define-constant err-not-verified (err u102))
 
-;; constants
-;;
+;; Check if caller is admin
+(define-private (is-admin)
+  (is-eq tx-sender (var-get admin)))
 
-;; data vars
-;;
+;; Verify a creator
+(define-public (verify-creator (creator principal))
+  (begin
+    (asserts! (is-admin) err-not-admin)
+    (asserts! (is-none (map-get? verified-creators creator)) err-already-verified)
+    (ok (map-set verified-creators creator true))))
 
-;; data maps
-;;
+;; Revoke verification
+(define-public (revoke-verification (creator principal))
+  (begin
+    (asserts! (is-admin) err-not-admin)
+    (asserts! (is-some (map-get? verified-creators creator)) err-not-verified)
+    (ok (map-delete verified-creators creator))))
 
-;; public functions
-;;
+;; Check if a creator is verified
+(define-read-only (is-verified (creator principal))
+  (default-to false (map-get? verified-creators creator)))
 
-;; read only functions
-;;
-
-;; private functions
-;;
-
+;; Transfer admin rights
+(define-public (transfer-admin (new-admin principal))
+  (begin
+    (asserts! (is-admin) err-not-admin)
+    (ok (var-set admin new-admin))))
