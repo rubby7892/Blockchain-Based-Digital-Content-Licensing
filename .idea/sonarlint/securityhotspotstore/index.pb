@@ -9,3 +9,5 @@ O
 contracts/license-template.clar,3/a/3a10063ac09839751b2a43c0d0193f841ed56ff0
 S
 #contracts/revenue-distribution.clar,c/a/ca3977e075ac658f2d637c76dfceb22d2ec66448
+M
+contracts/usage-tracking.clar,e/9/e9b09179d691ec658ec849bf83481dab4134e530
